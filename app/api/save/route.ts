@@ -18,17 +18,20 @@ import { type NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
     console.log("Get Start..")
     try {
+        console.log("Get Start2..")
         // MySQL接続情報をSecretManagerから取得
         const secret_name = "devMySQLUserOsaka";
         const client = new SecretsManagerClient({
             region: "ap-northeast-3",
         })
+        console.log("Get Start3..")
         const secretRes = await client.send(
             new GetSecretValueCommand({
                 SecretId: secret_name,
                 VersionStage: "AWSCURRENT", // VersionStage defaults to AWSCURRENT if unspecified
             })
         )
+        console.log("Get Start4..")
         const secret = secretRes.SecretString
         const secretJson = secret ? JSON.parse(secret) : {}
         const connection = mysql.createConnection({
@@ -41,24 +44,24 @@ export async function GET(request: NextRequest) {
         console.log("host", secretJson.host)
         console.log("Connect start... currentDate", currentDate)
 
-        connection.connect((err) => {
-            if (err) {
-                console.log('接続エラー:(' + currentDate + ') ' + err.stack);
-                const response = {
-                    statusCode: 501,
-                    body: {
-                        "result": "1",
-                        "errorCode": "200"
-                    }
-                }
-                return Response.json(response)
-            } else {
-                // JSON形式でDBに格納
-                //const query = 'INSERT INTO ekyc2 (ekyc) values (?)'
-                //const result = connection.query(query, insertJson);
-                console.log('DB接続OK！');
-            }
-        })
+        // connection.connect((err) => {
+        //     if (err) {
+        //         console.log('接続エラー:(' + currentDate + ') ' + err.stack);
+        //         const response = {
+        //             statusCode: 501,
+        //             body: {
+        //                 "result": "1",
+        //                 "errorCode": "200"
+        //             }
+        //         }
+        //         return Response.json(response)
+        //     } else {
+        //         // JSON形式でDBに格納
+        //         //const query = 'INSERT INTO ekyc2 (ekyc) values (?)'
+        //         //const result = connection.query(query, insertJson);
+        //         console.log('DB接続OK！');
+        //     }
+        // })
 
         const response = {
             statusCode: 200,
@@ -67,10 +70,11 @@ export async function GET(request: NextRequest) {
                 "errorCode": ""
             }
         }
+        console.log('GetEnd!');
         return Response.json(response)
     }
     catch(err){
-        console.log("An error has occured!!", err)
+        console.log("エラーが発生しました。", err)
         const response = {
             statusCode: 500,
             body: {
