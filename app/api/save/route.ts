@@ -54,9 +54,9 @@ export async function GET(request: NextRequest) {
                 return Response.json(response)
             } else {
                 // JSON形式でDBに格納
-                const query = 'INSERT INTO ekyc2 (ekyc) values (?)'
-                const result = connection.query(query, insertJson);
-                console.log('データが挿入されました！');
+                //const query = 'INSERT INTO ekyc2 (ekyc) values (?)'
+                //const result = connection.query(query, insertJson);
+                console.log('DB接続OK！');
             }
         })
 
